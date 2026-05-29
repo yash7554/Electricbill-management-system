@@ -1,44 +1,52 @@
-# Parking Management System
+#Electric Bill Management System
 
-A Spring Boot REST API for managing real-time parking slot assignments.
+A Spring Boot REST API to manage customer meter readings and automated bill generation.
 
 Setup Instructions
-1. Database: Create a MySQL database named `parking_db`.
-2. Table: Run the following SQL:
-USE parking_db;
-CREATE TABLE parking_slot (
+1. Database: Create a MySQL database named `eb_management`.
+2. Table Setup: Run the following SQL in your workbench:
+
+CREATE DATABASE eb_management;
+USE eb_management;
+
+CREATE TABLE customer_bill (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    slot_number VARCHAR(10),
-    is_occupied BOOLEAN,
-    vehicle_number VARCHAR(20),
-    entry_time DATETIME
+    meter_number VARCHAR(20) UNIQUE NOT NULL,
+    customer_name VARCHAR(100),
+    units_consumed INT DEFAULT 0,
+    total_bill DOUBLE DEFAULT 0.0
 );
-INSERT INTO parking_slot (slot_number, is_occupied) VALUES ('A1', false);
-INSERT INTO parking_slot (slot_number, is_occupied) VALUES ('A2', false);
-INSERT INTO parking_slot (slot_number, is_occupied) VALUES ('A3', false);
-INSERT INTO parking_slot (slot_number, is_occupied) VALUES ('A4', false);
-INSERT INTO parking_slot (slot_number, is_occupied) VALUES ('A5', false);
 
-select*from parking_slot(To Check the parking)
+-- Initial customers
+INSERT INTO customer_bill (meter_number, customer_name) 
+VALUES ('MET101', 'RAJ BADKHAL'), 
+        ('MET102', 'Rahul Sharma');
+        ('MET103', 'Ananya Iyer'),
+        ('MET104', 'Vikram Malhotra'),
+        ('MET105', 'Siddharth Joshi'),
+        ('MET106', 'Priya Deshmukh'),
+        ('MET107', 'Arjun Verma'),
+        ('MET108', 'Sneha Kulkarni'),
+        ('MET109', 'Ishaan Reddy'),
+        ('MET110', 'Tanvi Sawant'),
+        ('MET111', 'Rohan Mehra'),
+        ('MET112', 'Kavita Nair');
 
+TO DISPLAY INFO TYPE:
+select*from customer_bill;
 
-3.To Park a Vehicle(using POSTMAN)
-URL: /api/parking/park
+3.TO GENERATE/UPDATE BILL TYPE:(IN POSTMAN) 
+http://localhost:8080/api/bill/update?meterNumber=MET101&units=150
+(IT IS FOR METER NO 101 AND ITS UNIT IS 150,WE HAVE TO PROVIDE THIS DATA TO POSTMAN VIA LINK
+FOR EXAMPLE:IF YOU WANT TO GENERATE BILL AMOUNT OF CUSTOMER WHOSE METER NO. IS 107 AND UNIT 200
+SO THE LINK WILL BE LOOK LIKE:http://localhost:8080/api/bill/update?meterNumber=MET107&units=200)
 
-Method: POST
+4.LOGIC:
+Rate: ₹7.0 per unit.
 
-Params: vehicleNumber (String)
+Formula: Total Bill = Units Consumed × 7
 
-Example: http://localhost:8080/api/parking/park?vehicleNumber=MH12AB1234
-
-4.To Unpark a Vehicle
-URL: /api/parking/unpark/{vehicleNumber}
-
-Method: POST
-
-Example: http://localhost:8080/api/parking/unpark/MH12AB1234
-
-5.Output:
-you can see database updated in mysqlworkbench by using query:
-select*from parking_slot
-
+5.FINALLY:
+AMOUNT WILL DISPLAYED ANS STORED IN DATABASE 
+WE CAN SEE BY USING FOLLOWING QUERY:
+select*from customer_bill;
